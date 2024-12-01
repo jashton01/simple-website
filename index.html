@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Simple Website</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet\" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -29,18 +29,60 @@
             </section>
             <section id="contact">
                 <h2>Contact</h2>
-                <p>Feel free to reach out to me!</p>
-                <form>
-                    <input type="text" placeholder="Your Name">
-                    <input type="email" placeholder="Your Email">
-                    <textarea placeholder="Your Message"></textarea>
+                <p>Fill out the form below to send a message</p>
+                <form id="contactForm">
+                    <input type="text" id="name" placeholder="Your Name" required>
+                    <input type="email" id="email" placeholder="Your Email" required>
+                    <textarea id="message" placeholder="Your Message" required></textarea>
                     <button type="submit">Send</button>
                 </form>
+                <div id="apiResponse"></div>
             </section>
         </main>
         <footer>
             <p>&copy; 2024 My Simple Website. All rights reserved.</p>
         </footer>
     </div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            // Make API request to JSONPlaceholder
+            fetch('https://jsonplaceholder.typicode.com/posts', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: `Message from ${name}`,
+                    body: message,
+                    email: email,
+                    userId: 1
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById('apiResponse');
+                responseDiv.innerHTML = `
+                    <h3>API Response</h3>
+                    <p>Message sent successfully!</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            })
+            .catch(error => {
+                const responseDiv = document.getElementById('apiResponse');
+                responseDiv.innerHTML = `
+                    <h3>Error</h3>
+                    <p>Something went wrong: ${error.message}</p>
+                `;
+            });
+        });
+    </script>
 </body>
 </html>
